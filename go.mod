@@ -1,4 +1,4 @@
-module linebot
+module github.com/owenbebebe/Golang-Linebot
 
 go 1.21.6
 

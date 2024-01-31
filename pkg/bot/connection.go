@@ -6,10 +6,11 @@ import (
 	"net/http"
 
 	"github.com/line/line-bot-sdk-go/v8/linebot"
-	"github.com/owenbebebe/Goland-Linebot/pkg/setting"
+	"github.com/owenbebebe/Golang-Linebot/pkg/settings"
 )
 
-func Init(s *setting.LineBotInfo) {
+func Init(s *settings.LineBotInfo) {
+	// create new line bot that reads Channel Secret and ChannelAccessToken from the file
 	bot, err := linebot.New(
 		s.ChannelSecret,
 		s.ChannelAccessToken,
