@@ -8,7 +8,7 @@ $CONTAINER_NAME = "mongodbLine"
 docker pull "${IMAGE_NAME}:${IMAGE_VERSION}"
 
 #run mongo image
-docker run -d --name="${CONTAINER_NAME}" "${IMAGE_NAME}:${IMAGE_VERSION}"
+docker run --name="${CONTAINER_NAME}" -d -p 27017:27017 "${IMAGE_NAME}:${IMAGE_VERSION}"
 
 #check if container is running
 docker logs "${CONTAINER_NAME}"
