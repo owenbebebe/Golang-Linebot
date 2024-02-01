@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -46,5 +47,11 @@ func main() {
 	if err := r.Run(":8080"); err != nil {
 		log.Println("failed to start gin on port 8080", err)
 		panic(err)
+	}
+	response, err := gpt.getGPT3Response("Translate the following English text to French: '{}'")
+	if err != nil {
+		fmt.Println("Error:", err)
+	} else {
+		fmt.Println("Response:", response)
 	}
 }
