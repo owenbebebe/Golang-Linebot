@@ -37,6 +37,10 @@ func main() {
 		api.POST("/message", func(c *gin.Context) {
 			handlr.SendMessages(c, bot.LineBot)
 		})
+		api.GET("/querymessage", func(c *gin.Context) {
+			handlr.QueryMessages(c, db.Collection)
+		})
+
 	}
 	// running gin on port 8080
 	if err := r.Run(":8080"); err != nil {
