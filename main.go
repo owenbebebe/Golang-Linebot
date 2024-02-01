@@ -16,6 +16,7 @@ func main() {
 		conf.WithPath("../cinnox-spec1/chat/app"), // ../chat/app
 		conf.WithType("yaml"),
 	)
+	// init line bot
 	var botInfo settings.LineBotInfo
 	cfg.Unmarshal(&botInfo)
 	bot.Init(&botInfo)
@@ -28,15 +29,14 @@ func main() {
 	r := gin.Default()
 	// set up root POST directory to connect to Line Message API
 	//give me a POST to root directory with returning 200
-	r.POST("/", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
+	r.POST("/webhook", func(c *gin.Context) {
+		handlr.Webhook(c)
 	})
-	v2 := r.Group("/v2/bot")
+	api := r.Group("/api")
 	{
-		v2.POST("/message", handlr.CreateMessage)
-		v2.POST("/webhook", handlr.Webhook)
+		api.POST("/message", func(c *gin.Context) {
+			handlr.SendMessages(c, bot.LineBot)
+		})
 	}
 	// running gin on port 8080
 	if err := r.Run(":8080"); err != nil {

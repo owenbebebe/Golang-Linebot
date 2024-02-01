@@ -35,7 +35,6 @@ func Webhook(c *gin.Context) {
 				if err != nil {
 					fmt.Println("Get profile err:", err)
 				}
-				fmt.Println("MessageID:", message.ID, "UserID:", userId, "Message:", message.Text, "UserName:", profile.DisplayName)
 				// Create message object
 				userMessage := &model.Message{
 					MessageId: message.ID,

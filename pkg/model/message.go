@@ -19,7 +19,6 @@ type Message struct {
 
 // creates a message struct in the database
 func CreateMessage(m *Message) error {
-	fmt.Println("parsing message in database")
 	m.ID = primitive.NewObjectID()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()

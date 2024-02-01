@@ -1,24 +1,25 @@
 package handlr
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/owenbebebe/Golang-Linebot/pkg/model"
+	"github.com/line/line-bot-sdk-go/v8/linebot"
 )
 
-func CreateMessage(c *gin.Context) {
-	var msg model.Message
-	if err := c.BindJSON(&msg); err != nil {
-		fmt.Println("Bind JSON error", err)
-		c.AbortWithStatus(http.StatusBadRequest)
-	} else {
-		if err := model.CreateMessage(&msg); err != nil {
-			fmt.Println("Create message error", err)
-			c.AbortWithStatus(http.StatusInternalServerError)
-		} else {
-			c.JSON(http.StatusCreated, msg)
-		}
+// SendMessages API function that sends message to specific user ID
+func SendMessages(c *gin.Context, bot *linebot.Client) {
+	userId := "<specific userID>"
+	pushMessage := c.DefaultQuery("message", "send empty message")
+	message := linebot.NewTextMessage(pushMessage)
+
+	//error handling
+	_, err := bot.PushMessage(userId, message).Do()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err})
+		log.Print(err)
+		return
 	}
+	c.JSON(http.StatusOK, gin.H{"message": "send message successfully!"})
 }
