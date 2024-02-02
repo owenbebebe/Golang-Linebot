@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -28,17 +27,16 @@ func main() {
 	}
 	// set up routes
 	r := gin.Default()
-	// set up root POST directory to connect to Line Message API
 	//give me a POST to root directory with returning 200
 	r.POST("/webhook", func(c *gin.Context) {
 		handlr.Webhook(c)
 	})
 	api := r.Group("/api")
 	{
-		api.POST("/message", func(c *gin.Context) {
+		api.POST("/sendmessage/:id", func(c *gin.Context) {
 			handlr.SendMessages(c, bot.LineBot)
 		})
-		api.GET("/querymessage", func(c *gin.Context) {
+		api.GET("/querymessage/:id", func(c *gin.Context) {
 			handlr.QueryMessages(c, db.Collection)
 		})
 
@@ -48,10 +46,5 @@ func main() {
 		log.Println("failed to start gin on port 8080", err)
 		panic(err)
 	}
-	response, err := gpt.getGPT3Response("Translate the following English text to French: '{}'")
-	if err != nil {
-		fmt.Println("Error:", err)
-	} else {
-		fmt.Println("Response:", response)
-	}
+
 }

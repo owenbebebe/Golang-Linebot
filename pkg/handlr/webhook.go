@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/line/line-bot-sdk-go/v8/linebot"
 	"github.com/owenbebebe/Golang-Linebot/pkg/bot"
+	"github.com/owenbebebe/Golang-Linebot/pkg/gpt"
 	"github.com/owenbebebe/Golang-Linebot/pkg/model"
 )
 
@@ -44,6 +45,18 @@ func Webhook(c *gin.Context) {
 				}
 				// Create message in database
 				model.CreateMessage(userMessage)
+				// Send message to GPT-3
+				response, err := gpt.GetGPT3Response(message.Text)
+				if err != nil {
+					fmt.Println("Error:", err)
+				} else {
+					fmt.Println("Response:", response)
+				}
+				// Send message back to user
+				if _, err := bot.LineBot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(response)).Do(); err != nil {
+					fmt.Println("Error:", err)
+				}
+
 			}
 		}
 	}

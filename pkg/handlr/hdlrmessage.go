@@ -1,6 +1,7 @@
 package handlr
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -13,8 +14,9 @@ import (
 
 // SendMessages API function that sends message to specific user ID
 func SendMessages(c *gin.Context, bot *linebot.Client) {
-	userId := "<specify user ID here>"
-	pushMessage := c.DefaultQuery("message", "send empty message")
+	fmt.Println("Successfully called send message function")
+	userId := c.Params.ByName("id")
+	pushMessage := c.DefaultQuery("message", "在幹嘛?")
 	message := linebot.NewTextMessage(pushMessage)
 
 	//error handling
@@ -29,8 +31,7 @@ func SendMessages(c *gin.Context, bot *linebot.Client) {
 
 // get all of the messages sent by specific user ID
 func QueryMessages(c *gin.Context, collection *mongo.Collection) {
-	userId := "<specify user ID here>"
-
+	userId := c.Params.ByName("id")
 	// Query messages from MongoDB
 	filter := bson.M{"userId": userId}
 	findOptions := options.Find()
@@ -43,11 +44,15 @@ func QueryMessages(c *gin.Context, collection *mongo.Collection) {
 	defer cursor.Close(c.Request.Context())
 
 	// Iterate over the cursor and retrieve messages
-	var messages []bson.M
-	if err := cursor.All(c.Request.Context(), &messages); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": err})
-		log.Print(err)
-		return
+	var messages []string // Modify the type to store only the "message" attribute
+	for cursor.Next(c.Request.Context()) {
+		var message bson.M
+		if err := cursor.Decode(&message); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"message": err})
+			log.Print(err)
+			return
+		}
+		messages = append(messages, message["message"].(string)) // Retrieve the "message" attribute
 	}
 
 	c.JSON(http.StatusOK, gin.H{"messages": messages})
